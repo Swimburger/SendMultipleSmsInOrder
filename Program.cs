@@ -34,4 +34,15 @@ foreach (var image in images)
         }
     );
     Console.WriteLine($"Status: {messageResource.Status}");
+
+    for (var i = 0; i < 10; i++)
+    {
+        messageResource = await MessageResource.FetchAsync(messageResource.Sid);
+        if (messageResource.Status == MessageResource.StatusEnum.Delivered)
+        {
+            break;
+        }
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+    }
 }
