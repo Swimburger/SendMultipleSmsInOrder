@@ -23,6 +23,24 @@ var images = new[]
     "https://raw.githubusercontent.com/Swimburger/SendMultipleSmsInOrder/main/images/DogMeme4.png",
 };
 
+async Task<bool> WaitForDelivery(string messageSid)
+{
+    const int maxAmountOfChecks = 20;
+    var delayBetweenChecks = TimeSpan.FromSeconds(1);
+    for (var i = 0; i < maxAmountOfChecks; i++)
+    {
+        var message = await MessageResource.FetchAsync(messageSid).ConfigureAwait(false);
+        if (message.Status == MessageResource.StatusEnum.Delivered)
+        {
+            return true;
+        }
+
+        await Task.Delay(delayBetweenChecks).ConfigureAwait(false);
+    }
+
+    return false;
+}
+
 foreach (var image in images)
 {
     var messageResource = await MessageResource.CreateAsync(
@@ -35,14 +53,10 @@ foreach (var image in images)
     );
     Console.WriteLine($"Status: {messageResource.Status}");
 
-    for (var i = 0; i < 10; i++)
+    var wasDelivered = await WaitForDelivery(messageResource.Sid);
+    if (wasDelivered == false)
     {
-        messageResource = await MessageResource.FetchAsync(messageResource.Sid);
-        if (messageResource.Status == MessageResource.StatusEnum.Delivered)
-        {
-            break;
-        }
-
-        await Task.Delay(TimeSpan.FromSeconds(1));
+        Console.WriteLine("Message wasn't delivered in time.");
+        break;
     }
 }
