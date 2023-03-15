@@ -41,8 +41,9 @@ async Task<bool> WaitForDelivery(string messageSid)
     return false;
 }
 
-foreach (var image in images)
+for (var index = 0; index < images.Length; index++)
 {
+    var image = images[index];
     var messageResource = await MessageResource.CreateAsync(
         to: new PhoneNumber(to),
         from: new PhoneNumber(from),
@@ -53,10 +54,14 @@ foreach (var image in images)
     );
     Console.WriteLine($"Status: {messageResource.Status}");
 
-    var wasDelivered = await WaitForDelivery(messageResource.Sid);
-    if (wasDelivered == false)
+    // if not the last image
+    if (index != images.Length - 1)
     {
-        Console.WriteLine("Message wasn't delivered in time.");
-        break;
+        var wasDelivered = await WaitForDelivery(messageResource.Sid);
+        if (wasDelivered == false)
+        {
+            Console.WriteLine("Message wasn't delivered in time.");
+            break;
+        }
     }
 }
