@@ -17,8 +17,10 @@ TwilioClient.Init(
 
 var images = new[]
 {
-    "",
-    ""
+    "https://raw.githubusercontent.com/Swimburger/SendMultipleSmsInOrder/main/images/DogMeme1.png",
+    "https://raw.githubusercontent.com/Swimburger/SendMultipleSmsInOrder/main/images/DogMeme2.png",
+    "https://raw.githubusercontent.com/Swimburger/SendMultipleSmsInOrder/main/images/DogMeme3.png",
+    "https://raw.githubusercontent.com/Swimburger/SendMultipleSmsInOrder/main/images/DogMeme4.png",
 };
 
 foreach (var image in images)
@@ -30,9 +32,6 @@ foreach (var image in images)
         {
             new(image)
         }
-    ).ConfigureAwait(false);
+    );
     Console.WriteLine($"Status: {messageResource.Status}");
 }
-
-Console.WriteLine("Press any key to stop application.");
-Console.ReadKey();
